@@ -1,3 +1,6 @@
 .DS_Store
 CLAUDE.md
 schema.sql
+features.md
+seed_tools.sql
+ops_templates.sql
