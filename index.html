@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Outils IA de bureau</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    body { font-family: sans-serif; margin: 0; padding: 16px; color: #222; }
+    h1 { margin: 0 0 16px; }
+    nav { margin-bottom: 8px; }
+    nav button {
+      margin-right: 4px;
+      padding: 6px 12px;
+      border: 1px solid #ccc;
+      background: #fff;
+      cursor: pointer;
+    }
+    nav button.active { background: #333; color: #fff; border-color: #333; }
+
+    table {
+      border-collapse: collapse;
+      border-spacing: 0;
+      width: 100%;
+      border: 1px solid #ddd;
+    }
+    th, td {
+      text-align: center;
+      padding: 14px;
+    }
+    th:first-child, td:first-child {
+      text-align: left;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    .fa-check  { color: green; }
+    .fa-remove { color: red; }
+    .muted     { color: #aaa; }
+
+    thead th[data-id] { cursor: pointer; }
+    thead th[data-id]:hover { background-color: #e8f0fe; }
+
+    .table-scroll { overflow-x: auto; }
+    .tool-name { font-weight: 600; display: block; }
+    .editor    { display: block; color: #666; font-size: 0.85em; font-weight: normal; }
+
+    #empty-msg {
+      padding: 48px 16px;
+      text-align: center;
+      color: #666;
+      border: 1px dashed #ccc;
+      border-radius: 8px;
+    }
+    #empty-msg.hidden { display: none; }
+
+    #overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000;
+    }
+    #overlay.hidden { display: none; }
+    #overlay-panel {
+      background: #fff;
+      padding: 24px;
+      max-width: 640px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      border-radius: 8px;
+      position: relative;
+    }
+    #overlay-close {
+      position: absolute; top: 8px; right: 8px;
+      background: none; border: none;
+      font-size: 20px; cursor: pointer;
+    }
+    #overlay-content section { margin-top: 16px; }
+    #overlay-content h3 { margin: 0 0 4px; font-size: 1em; color: #555; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1 id="page-title">Outils IA de bureau</h1>
+    <nav id="lang-switcher">
+      <button data-lang="fr" class="active">FR</button>
+      <button data-lang="en">EN</button>
+    </nav>
+    <nav id="category-filter">
+      <!-- boutons injectés par app.js depuis la table `categories` -->
+    </nav>
+  </header>
+
+  <div class="table-scroll">
+    <table id="tools-table">
+      <!-- thead + tbody injectés par app.js -->
+    </table>
+  </div>
+
+  <div id="empty-msg" class="hidden"></div>
+
+  <!-- OVERLAY -->
+  <div id="overlay" class="hidden" role="dialog" aria-modal="true">
+    <div id="overlay-panel">
+      <button id="overlay-close" aria-label="Fermer">✕</button>
+      <div id="overlay-content">
+        <!-- contenu injecté par app.js -->
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+</body>
+</html>
