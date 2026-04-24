@@ -1,0 +1,7 @@
+# Block exposure of the .git directory (full repo history).
+RedirectMatch 404 /\.git
+
+# Deny serving source / meta / config files that aren't web content.
+<FilesMatch "\.(md|sql|sh|env|example|gitignore|gitattributes|htaccess)$">
+  Require all denied
+</FilesMatch>
