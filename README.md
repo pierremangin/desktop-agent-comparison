@@ -9,9 +9,9 @@ Goose has been around for a while.
 New appls are poping up every week since the beginning of 2026.
 This page showcases a curated list of these apps.
 
-Rendered as a transposed matrix (criteria as rows, tools as columns). Bilingual UI (French / English), more languages planned.
+Rendered as a transposed matrix (criteria as rows, tools as columns). **UI in 12 languages:** EN, FR, ES, DE, IT, NL, RU, HI, PT, JA, KO, ZH. Language switcher at top.
 
-Pure front-end: no build step, no package manager, no tests. `index.html` loads the `@supabase/supabase-js` UMD bundle from jsDelivr and `app.js` renders the table from a Supabase Postgres backend.
+Pure front-end: no build step, no package manager, no tests. `index.html` loads the `@supabase/supabase-js` UMD bundle from jsDelivr and `app.js` renders the table from a Supabase Postgres backend. Table includes website links (Download column) and footer with ia-decoded.fr/com link.
 
 ## Stack
 
@@ -31,27 +31,27 @@ Then open http://localhost:8000.
 
 ## Data model
 
-Six tables in Supabase:
+Four active tables in Supabase:
 
-- `languages` — language codes and labels.
-- `categories`, `licenses`, `update_frequencies` — small lookups with a `labels jsonb` column (`{"fr":"…","en":"…"}`).
-- `tools` — one row per app. Flat: typed columns for platforms (macOS / Windows / Linux / iOS / Android) and features (model choice, freemium, enterprise offer, local LLM, local / cloud agentic, documentation, automation). Booleans are tri-state — `null` means "unknown" and renders as an em-dash.
-- `tools_translations` — EAV table for long localized text (description, positioning, ideal_for, limitations, editor_notes).
+- `languages` — language codes and labels (12 languages).
+- `licenses` — license types with multilingual labels (`{"fr":"…","en":"…",…}`).
+- `tools` — one row per app. Flat schema: typed columns for platforms (macOS / Windows / Linux / iOS / Android), features (model choice, freemium, enterprise, local/cloud agentic, documentation, automation, open source, web interface, messaging, BYOK, MCP, computer use, etc.), and metadata (editor, location, website URL, release date, order, published flag). Booleans are tri-state — `null` means "unknown" and renders as an em-dash.
+- `tools_translations` — EAV table for long localized text (description, positioning, ideal_for, limitations, editor_notes) in all 12 languages.
 
 Row-Level Security is enabled on all tables with public-read policies, which is what lets the anon key work in the browser.
 
 ## Front-end architecture
 
-- `CRITERIA` array in `app.js` is the single source of truth for row order, labels (FR + EN), and per-cell render logic.
-- `UI` object holds all localized UI strings.
-- `fetchTools()` pulls everything in one PostgREST query using embedded selects; language and filter changes never re-fetch, they just re-render.
-- Category filter buttons are rendered from the `categories` table — no hardcoded category strings.
+- `CRITERIA` array in `app.js` is the single source of truth for row order, labels (all 12 languages), and per-cell render logic. Includes platforms, features, website link (Download), and metadata.
+- `UI` object holds all localized UI strings (title, criterion label, empty state, footer) in all 12 languages.
+- `fetchTools()` pulls everything in one PostgREST query using embedded selects; language changes never re-fetch, they just re-render.
+- Language switcher (12 buttons) at top — clicking a button updates `currentLang` and triggers a full re-render of the table labels and footer.
 
 ## Deploy
 
 The repo **is** the deploy artifact. OVH pulls `main` directly into the webroot on every push. Anything committed at the repo root ends up publicly served.
 
-- `.gitignore` is the primary boundary — dev artifacts (`schema.sql`, ops templates, notes) are kept out of the repo entirely.
+- `.gitignore` is the primary boundary — dev artifacts (all `.sql` files, CLAUDE.md, notes) are kept out of the repo entirely.
 - `.htaccess` is defense-in-depth — it blocks `/.git/*` and denies Markdown / SQL / env / dotfiles at the HTTP layer.
 
 ## Secrets
