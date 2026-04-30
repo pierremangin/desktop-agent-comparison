@@ -21,15 +21,17 @@
       font-weight: <weight>;
       font-style: normal;
     }
-    body { margin: 0; padding: 16px; color: #222; font-family: "Raleway"; font-size: 20px; }
-    h1 { margin: 0 0 16px; font-family: "Bitter", serif; font-weight: 900; letter-spacing: -0.1rem; font-size: 3.5rem; }
-    nav { margin-bottom: 8px; }
+    body { margin: 0; padding: 2rem; color: #222; font-family: "Raleway"; font-size: 20px; }
+    h1 { margin: 0 0 16px; text-align: center; font-family: "Bitter", serif; font-weight: 900; letter-spacing: -0.1rem; font-size: 3.5rem; }
+    header { margin: 3rem auto; }
+    nav { margin-bottom: 8px; text-align: center; }
     nav button {
       margin-right: 4px;
       padding: 6px 12px;
       border: 1px solid #ccc;
       background: #fff;
       cursor: pointer;
+      border-radius: 4px;
     }
     nav button.active { background: #333; color: #fff; border-color: #333; }
 
@@ -102,7 +104,7 @@
 <body>
 
   <header>
-    <h1 id="page-title">Comparatif Agents IA de bureau, Mai 2026</h1>
+    <h1 id="page-title">Comparatif Agents IA de bureau - Mai 2026</h1>
     <nav id="lang-switcher">
       <button data-lang="fr" class="active">FR</button>
       <button data-lang="en">EN</button>
