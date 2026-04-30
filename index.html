@@ -3,11 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Outils IA de bureau</title>
+  <title>Comparatif Agents IA de bureau | IA-decoded, 2026</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Bitter:ital,wght@0,100..900;1,100..900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   <style>
-    body { font-family: sans-serif; margin: 0; padding: 16px; color: #222; }
-    h1 { margin: 0 0 16px; }
+    .bitter-<uniquifier> {
+      font-family: "Bitter", serif;
+      font-optical-sizing: auto;
+      font-weight: <weight>;
+      font-style: normal;
+    }
+    .raleway-<uniquifier> {
+      font-family: "Raleway", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: <weight>;
+      font-style: normal;
+    }
+    body { margin: 0; padding: 16px; color: #222; font-family: "Raleway"; font-size: 20px; }
+    h1 { margin: 0 0 16px; font-family: "Bitter", serif; font-weight: 900; letter-spacing: -0.1rem; font-size: 3.5rem; }
     nav { margin-bottom: 8px; }
     nav button {
       margin-right: 4px;
@@ -25,6 +40,7 @@
       border: 1px solid #ddd;
     }
     th, td {
+      font-weight: 300;
       text-align: center;
       padding: 14px;
     }
@@ -78,18 +94,27 @@
     }
     #overlay-content section { margin-top: 16px; }
     #overlay-content h3 { margin: 0 0 4px; font-size: 1em; color: #555; }
+    #table-footer a { color: #999; text-decoration: none; }
+    #table-footer a:hover { color: #333; text-decoration: underline; }
   </style>
 </head>
 <body>
 
   <header>
-    <h1 id="page-title">Outils IA de bureau</h1>
+    <h1 id="page-title">Comparatif Agents IA de bureau, Mai 2026</h1>
     <nav id="lang-switcher">
       <button data-lang="fr" class="active">FR</button>
       <button data-lang="en">EN</button>
-    </nav>
-    <nav id="category-filter">
-      <!-- boutons injectés par app.js depuis la table `categories` -->
+      <button data-lang="es">ES</button>
+      <button data-lang="de">DE</button>
+      <button data-lang="it">IT</button>
+      <button data-lang="nl">NL</button>
+      <button data-lang="ru">RU</button>
+      <button data-lang="hi">HI</button>
+      <button data-lang="pt">PT</button>
+      <button data-lang="ja">JA</button>
+      <button data-lang="ko">KO</button>
+      <button data-lang="zh">ZH</button>
     </nav>
   </header>
 
@@ -98,6 +123,8 @@
       <!-- thead + tbody injectés par app.js -->
     </table>
   </div>
+
+  <div id="table-footer" style="text-align: center; color: #999; font-size: 0.85em; margin-top: 16px;"></div>
 
   <div id="empty-msg" class="hidden"></div>
 
@@ -112,6 +139,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@15/marked.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

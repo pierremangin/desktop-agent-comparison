@@ -1,6 +1,8 @@
 .DS_Store
 CLAUDE.md
-schema.sql
+AGENTS.md
+spa.html
+.claude/
+*.sql
 features.md
-seed_tools.sql
-ops_templates.sql
+tools.md
