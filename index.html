@@ -26,14 +26,24 @@
     header { margin: 3rem auto; }
     nav { margin-bottom: 8px; text-align: center; }
     nav button {
-      margin-right: 4px;
-      padding: 6px 12px;
-      border: 1px solid #ccc;
+      margin-right: 8px;
+      padding: 4px;
+      border: 2px solid #ccc;
       background: #fff;
       cursor: pointer;
       border-radius: 4px;
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
-    nav button.active { background: #333; color: #fff; border-color: #333; }
+    nav button img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+    }
+    nav button.active { border-color: #333; box-shadow: 0 0 0 2px #f0f0f0, 0 0 0 4px #333; }
 
     table {
       border-collapse: collapse;
@@ -106,18 +116,18 @@
   <header>
     <h1 id="page-title">Comparatif Agents IA de bureau - Mai 2026</h1>
     <nav id="lang-switcher">
-      <button data-lang="fr" class="active">FR</button>
-      <button data-lang="en">EN</button>
-      <button data-lang="es">ES</button>
-      <button data-lang="de">DE</button>
-      <button data-lang="it">IT</button>
-      <button data-lang="nl">NL</button>
-      <button data-lang="ru">RU</button>
-      <button data-lang="hi">HI</button>
-      <button data-lang="pt">PT</button>
-      <button data-lang="ja">JA</button>
-      <button data-lang="ko">KO</button>
-      <button data-lang="zh">ZH</button>
+      <button data-lang="fr" class="active"><img src="assets/flags/fr.svg" alt="Français"></button>
+      <button data-lang="en"><img src="assets/flags/en.svg" alt="English"></button>
+      <button data-lang="es"><img src="assets/flags/es.svg" alt="Español"></button>
+      <button data-lang="de"><img src="assets/flags/de.svg" alt="Deutsch"></button>
+      <button data-lang="it"><img src="assets/flags/it.svg" alt="Italiano"></button>
+      <button data-lang="nl"><img src="assets/flags/nl.svg" alt="Nederlands"></button>
+      <button data-lang="ru"><img src="assets/flags/ru.svg" alt="Русский"></button>
+      <button data-lang="hi"><img src="assets/flags/hi.svg" alt="हिन्दी"></button>
+      <button data-lang="pt"><img src="assets/flags/pt.svg" alt="Português"></button>
+      <button data-lang="ja"><img src="assets/flags/ja.svg" alt="日本語"></button>
+      <button data-lang="ko"><img src="assets/flags/ko.svg" alt="한국어"></button>
+      <button data-lang="zh"><img src="assets/flags/zh.svg" alt="中文"></button>
     </nav>
   </header>
 
