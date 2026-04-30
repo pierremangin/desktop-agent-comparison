@@ -223,6 +223,7 @@ function renderTable() {
   const headCells = filtered.map(t => `
     <th data-id="${t.id}" width="9%">
       <span class="tool-name">${t.name}</span>
+      <img src="https://xrwqndrtckfgoztfkktj.supabase.co/storage/v1/object/public/comparatif/logo-${t.slug}.svg" alt="${t.name}" class="tool-logo">
     </th>
   `).join('')
 
