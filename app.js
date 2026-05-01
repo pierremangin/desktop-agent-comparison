@@ -6,6 +6,7 @@ const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 let currentLang = 'fr'
 let allTools = []
+let pagesContent = {}
 
 // ─── UI STRINGS ──────────────────────────────────────────
 const UI = {
@@ -64,6 +65,36 @@ const UI = {
     ja: "ia-decoded.comによってメンテナンスされています",
     ko: "ia-decoded.com에서 관리",
     zh: "由 ia-decoded.com 维护",
+  },
+  intro: {
+    more: {
+      fr: "...plus",
+      en: "...more",
+      es: "...más",
+      de: "...mehr",
+      it: "...più",
+      nl: "...meer",
+      ru: "...подробнее",
+      hi: "...और",
+      pt: "...mais",
+      ja: "...詳細",
+      ko: "...더보기",
+      zh: "...查看更多",
+    },
+    less: {
+      fr: "...moins",
+      en: "...less",
+      es: "...menos",
+      de: "...weniger",
+      it: "...meno",
+      nl: "...minder",
+      ru: "...свернуть",
+      hi: "...कम",
+      pt: "...menos",
+      ja: "...簡潔",
+      ko: "...덜보기",
+      zh: "...查看更少",
+    },
   },
   overlay: {
     description: {
@@ -143,8 +174,8 @@ const tx = (obj, lang) => obj?.[lang] ?? obj?.fr ?? ''
 
 // ─── CRITERIA (rows) ─────────────────────────────────────
 const boolIcon = v =>
-  v === true  ? '<i class="fa fa-check"></i>' :
-  v === false ? '<i class="fa fa-remove"></i>' :
+  v === true  ? '<svg class="icon-check" viewBox="0 0 32 32" fill="green"><path d="M10.8,29.4L0,15.34l4.79-4.99,6.01,7.64L29.66,2.6l2.34,2.34L10.8,29.4h0Z"/></svg>' :
+  v === false ? '<svg class="icon-remove" viewBox="0 0 32 32" fill="red"><path d="M29.4,7.34l-8.66,8.66,8.66,8.66v4.74h-4.74l-8.66-8.66-8.66,8.66H2.6v-4.74l8.66-8.66L2.6,7.34V2.6h4.74l8.66,8.66L24.66,2.6h4.74v4.74Z"/></svg>' :
                 '<span class="muted">—</span>'
 
 const textCell = v => (v ?? v === 0) ? String(v) : '<span class="muted">—</span>'
@@ -156,7 +187,7 @@ const levelCell = n => n
 const CRITERIA = [
   { label: { fr: 'Éditeur', en: 'Publisher', es: 'Editorial', de: 'Herausgeber', it: 'Editore', nl: 'Uitgever', ru: 'Издатель', hi: 'प्रकाशक', pt: 'Editor', ja: '発行者', ko: '게시자', zh: '发布者' }, render: t => textCell(t.editor) },
   { label: { fr: 'Localisation', en: 'Location', es: 'Ubicación', de: 'Standort', it: 'Posizione', nl: 'Locatie', ru: 'Местоположение', hi: 'स्थान', pt: 'Localização', ja: '場所', ko: '위치', zh: '位置' }, render: t => textCell(t.location) },
-  { label: { fr: 'Télécharger', en: 'Download', es: 'Descargar', de: 'Herunterladen', it: 'Scarica', nl: 'Downloaden', ru: 'Скачать', hi: 'डाउनलोड', pt: 'Baixar', ja: 'ダウンロード', ko: '다운로드', zh: '下载' }, render: t => t.website_url ? `<a href="${t.website_url}" target="_blank" title="${t.website_url}"><i class="fa fa-external-link"></i></a>` : '<span class="muted">—</span>' },
+  { label: { fr: 'Télécharger', en: 'Download', es: 'Descargar', de: 'Herunterladen', it: 'Scarica', nl: 'Downloaden', ru: 'Скачать', hi: 'डाउनलोड', pt: 'Baixar', ja: 'ダウンロード', ko: '다운로드', zh: '下载' }, render: t => t.website_url ? `<a href="${t.website_url}" target="_blank" title="${t.website_url}"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.125em"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>` : '<span class="muted">—</span>' },
   { label: { fr: 'Date de sortie', en: 'Release date', es: 'Fecha de lanzamiento', de: 'Veröffentlichungsdatum', it: 'Data di rilascio', nl: 'Releasedatum', ru: 'Дата выпуска', hi: 'रिलीज़ की तारीख', pt: 'Data de lançamento', ja: 'リリース日', ko: '출시일', zh: '发布日期' }, render: t => textCell(t.first_release_date?.substring(0, 7)) },
   { label: { fr: 'License', en: 'License', es: 'Licencia', de: 'Lizenz', it: 'Licenza', nl: 'Licentie', ru: 'Лицензия', hi: 'लाइसेंस', pt: 'Licença', ja: 'ライセンス', ko: '라이센스', zh: '许可证' }, render: (t, l) => textCell(tx(t.licenses?.labels, l)) },
   { label: { fr: 'macOS', en: 'macOS', es: 'macOS', de: 'macOS', it: 'macOS', nl: 'macOS', ru: 'macOS', hi: 'macOS', pt: 'macOS', ja: 'macOS', ko: 'macOS', zh: 'macOS' }, render: t => boolIcon(t.macos) },
@@ -190,10 +221,102 @@ async function fetchTools() {
   return data
 }
 
+async function fetchPagesContent() {
+  const { data, error } = await db
+    .from('pages_content')
+    .select('*')
+  if (error) { console.error(error); return [] }
+  data.forEach(row => {
+    const key = `${row.page_key}:${row.section_key}:${row.lang_code}`
+    if (!pagesContent[key]) pagesContent[key] = {}
+    pagesContent[key][row.field_key] = row.field_value
+  })
+}
+
+function getPageContent(page, section, lang, field) {
+  const key = `${page}:${section}:${lang}`
+  return pagesContent[key]?.[field] ?? ''
+}
+
 function getTranslation(tool, lang, key) {
   return tool.tools_translations?.find(
     tr => tr.lang_code === lang && tr.field_key === key
   )?.field_value || ''
+}
+
+function simpleMarkdown(text) {
+  const blocks = text.split('\n\n')
+  return blocks.map(block => {
+    const trimmed = block.trim()
+    if (!trimmed) return ''
+
+    if (trimmed.startsWith('*   ') || trimmed.startsWith('- ')) {
+      const items = trimmed.split('\n').map(line => {
+        const item = line.replace(/^[\*\-]\s+/, '').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+        return '<li>' + item + '</li>'
+      }).join('')
+      return '<ul>' + items + '</ul>'
+    }
+
+    if (trimmed.startsWith('##')) {
+      const match = trimmed.match(/^#+\s+(.+)$/)
+      if (match) {
+        return '<h3>' + match[1] + '</h3>'
+      }
+    }
+
+    if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
+      const match = trimmed.match(/^\*\*([^*]+)\*\*$/)
+      if (match) {
+        return '<h3>' + match[1] + '</h3>'
+      }
+    }
+
+    const html = trimmed.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    return '<p>' + html + '</p>'
+  }).join('')
+}
+
+function loadMarked() {
+  return new Promise((resolve) => {
+    if (window.marked) {
+      resolve()
+    } else {
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/marked@15/marked.min.js'
+      script.onload = resolve
+      document.head.appendChild(script)
+    }
+  })
+}
+
+function renderIntroPreview(lang) {
+  const preview = getPageContent('comparison_home', 'intro', lang, 'preview_text')
+  const moreLabel = tx(UI.intro.more, lang)
+  document.getElementById('intro-content').innerHTML = simpleMarkdown(preview) +
+    '<span id="intro-expand" data-expanded="false">' + moreLabel + '</span>'
+  attachIntroExpandListener(lang)
+}
+
+function renderIntroFull(lang) {
+  const full = getPageContent('comparison_home', 'intro', lang, 'full_text')
+  const lessLabel = tx(UI.intro.less, lang)
+  document.getElementById('intro-content').innerHTML = simpleMarkdown(full) +
+    '<span id="intro-expand" data-expanded="true">' + lessLabel + '</span>'
+  attachIntroExpandListener(lang)
+}
+
+function attachIntroExpandListener(lang) {
+  const expandBtn = document.getElementById('intro-expand')
+  if (!expandBtn) return
+  expandBtn.addEventListener('click', function() {
+    const isExpanded = expandBtn.dataset.expanded === 'true'
+    if (isExpanded) {
+      renderIntroPreview(lang)
+    } else {
+      renderIntroFull(lang)
+    }
+  })
 }
 
 // ─── RENDER ──────────────────────────────────────────────
@@ -204,6 +327,10 @@ function renderChrome() {
   document.querySelectorAll('#lang-switcher button').forEach(b => {
     b.classList.toggle('active', b.dataset.lang === currentLang)
   })
+
+  const introLabel = getPageContent('comparison_home', 'intro', currentLang, 'label')
+  document.getElementById('intro-label').textContent = introLabel
+  renderIntroPreview(currentLang)
 }
 
 function renderTable() {
@@ -256,7 +383,8 @@ function render() {
 }
 
 // ─── OVERLAY ─────────────────────────────────────────────
-function openOverlay(tool, lang) {
+async function openOverlay(tool, lang) {
+  await loadMarked()
   const keys = ['description', 'positioning', 'ideal_for', 'limitations', 'editor_notes']
 
   document.getElementById('overlay-content').innerHTML = `
@@ -295,8 +423,10 @@ document.getElementById('lang-switcher').addEventListener('click', function(e) {
   render()
 })
 
+
 // ─── INIT ────────────────────────────────────────────────
 async function init() {
+  await fetchPagesContent()
   allTools = await fetchTools()
   render()
 }
