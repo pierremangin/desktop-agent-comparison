@@ -172,6 +172,15 @@ const UI = {
 
 const tx = (obj, lang) => obj?.[lang] ?? obj?.fr ?? ''
 
+const LICENSE_LABELS = {
+  'MIT': { fr: 'MIT', en: 'MIT', es: 'MIT', de: 'MIT', it: 'MIT', nl: 'MIT', ru: 'MIT', hi: 'MIT', pt: 'MIT', ja: 'MIT', ko: 'MIT', zh: 'MIT' },
+  'Apache-2.0': { fr: 'Apache', en: 'Apache', es: 'Apache', de: 'Apache', it: 'Apache', nl: 'Apache', ru: 'Apache', hi: 'Apache', pt: 'Apache', ja: 'Apache', ko: 'Apache', zh: 'Apache' },
+  'GPL-3.0': { fr: 'GPL', en: 'GPL', es: 'GPL', de: 'GPL', it: 'GPL', nl: 'GPL', ru: 'GPL', hi: 'GPL', pt: 'GPL', ja: 'GPL', ko: 'GPL', zh: 'GPL' },
+  'Proprietary': { fr: 'Propriétaire', en: 'Proprietary', es: 'Propietario', de: 'Proprietär', it: 'Proprietario', nl: 'Eigendom', ru: 'Собственный', hi: 'मालिकाना', pt: 'Proprietário', ja: '独自', ko: '독점', zh: '专有' },
+  'CC-BY-4.0': { fr: 'CC', en: 'CC', es: 'CC', de: 'CC', it: 'CC', nl: 'CC', ru: 'CC', hi: 'CC', pt: 'CC', ja: 'CC', ko: 'CC', zh: 'CC' },
+  'Other': { fr: 'Autre', en: 'Other', es: 'Otro', de: 'Sonstige', it: 'Altro', nl: 'Overig', ru: 'Другое', hi: 'अन्य', pt: 'Outro', ja: 'その他', ko: '기타', zh: '其他' },
+}
+
 // ─── CRITERIA (rows) ─────────────────────────────────────
 const boolIcon = v =>
   v === true  ? '<svg class="icon-check" viewBox="0 0 32 32" fill="green"><path d="M10.8,29.4L0,15.34l4.79-4.99,6.01,7.64L29.66,2.6l2.34,2.34L10.8,29.4h0Z"/></svg>' :
@@ -189,7 +198,11 @@ const CRITERIA = [
   { label: { fr: 'Localisation', en: 'Location', es: 'Ubicación', de: 'Standort', it: 'Posizione', nl: 'Locatie', ru: 'Местоположение', hi: 'स्थान', pt: 'Localização', ja: '場所', ko: '위치', zh: '位置' }, render: t => textCell(t.location) },
   { label: { fr: 'Télécharger', en: 'Download', es: 'Descargar', de: 'Herunterladen', it: 'Scarica', nl: 'Downloaden', ru: 'Скачать', hi: 'डाउनलोड', pt: 'Baixar', ja: 'ダウンロード', ko: '다운로드', zh: '下载' }, render: t => t.website_url ? `<a href="${t.website_url}" target="_blank" title="${t.website_url}"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.125em"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>` : '<span class="muted">—</span>' },
   { label: { fr: 'Date de sortie', en: 'Release date', es: 'Fecha de lanzamiento', de: 'Veröffentlichungsdatum', it: 'Data di rilascio', nl: 'Releasedatum', ru: 'Дата выпуска', hi: 'रिलीज़ की तारीख', pt: 'Data de lançamento', ja: 'リリース日', ko: '출시일', zh: '发布日期' }, render: t => textCell(t.first_release_date?.substring(0, 7)) },
-  { label: { fr: 'License', en: 'License', es: 'Licencia', de: 'Lizenz', it: 'Licenza', nl: 'Licentie', ru: 'Лицензия', hi: 'लाइसेंस', pt: 'Licença', ja: 'ライセンス', ko: '라이센스', zh: '许可证' }, render: (t, l) => textCell(tx(t.licenses?.labels, l)) },
+  { label: { fr: 'License', en: 'License', es: 'Licencia', de: 'Lizenz', it: 'Licenza', nl: 'Licentie', ru: 'Лицензия', hi: 'लाइसेंस', pt: 'Licença', ja: 'ライセンス', ko: '라이센스', zh: '许可证' }, render: (t, l) => {
+    if (!t.license_code) return '<span class="muted">—</span>'
+    const mapped = LICENSE_LABELS[t.license_code]
+    return textCell(mapped ? mapped[l] : t.license_code)
+  }},
   { label: { fr: 'macOS', en: 'macOS', es: 'macOS', de: 'macOS', it: 'macOS', nl: 'macOS', ru: 'macOS', hi: 'macOS', pt: 'macOS', ja: 'macOS', ko: 'macOS', zh: 'macOS' }, render: t => boolIcon(t.macos) },
   { label: { fr: 'Windows', en: 'Windows', es: 'Windows', de: 'Windows', it: 'Windows', nl: 'Windows', ru: 'Windows', hi: 'Windows', pt: 'Windows', ja: 'Windows', ko: 'Windows', zh: 'Windows' }, render: t => boolIcon(t.windows) },
   { label: { fr: 'Linux', en: 'Linux', es: 'Linux', de: 'Linux', it: 'Linux', nl: 'Linux', ru: 'Linux', hi: 'Linux', pt: 'Linux', ja: 'Linux', ko: 'Linux', zh: 'Linux' }, render: t => boolIcon(t.linux) },
@@ -212,7 +225,6 @@ async function fetchTools() {
     .from('tools')
     .select(`
       *,
-      licenses(id, code, labels),
       tools_translations(field_key, field_value, lang_code)
     `)
     .eq('published', true)
