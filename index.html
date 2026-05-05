@@ -11,27 +11,59 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bitter:wght@900&family=Raleway:wght@300;600&display=swap" rel="stylesheet">
   <style>
-    .bitter-<uniquifier> {
-      font-family: "Bitter", serif;
-      font-optical-sizing: auto;
-      font-weight: <weight>;
-      font-style: normal;
+    :root {
+      --color-bg: #ffffff;
+      --color-text: #222222;
+      --color-text-muted: #aaaaaa;
+      --color-text-secondary: #666666;
+      --color-text-tertiary: #999999;
+      --color-border: #cccccc;
+      --color-border-light: #dddddd;
+      --color-surface-alt: #fafafa;
+      --color-surface-stripe: #f2f2f2;
+      --color-btn-bg: #ffffff;
+      --color-btn-shadow: #f0f0f0;
+      --color-link: #0a66c2;
+      --color-header-hover: #e8f0fe;
+      --color-overlay-bg: #ffffff;
+      --color-overlay-scrim: rgba(0,0,0,0.5);
+      --color-overlay-h3: #555555;
+      --color-icon-check: green;
+      --color-icon-remove: red;
+      --color-empty-border: #cccccc;
     }
-    .raleway-<uniquifier> {
-      font-family: "Raleway", sans-serif;
-      font-optical-sizing: auto;
-      font-weight: <weight>;
-      font-style: normal;
+
+    html[data-theme="dark"] {
+      --color-bg: #121212;
+      --color-text: #e0e0e0;
+      --color-text-muted: #666666;
+      --color-text-secondary: #999999;
+      --color-text-tertiary: #777777;
+      --color-border: #444444;
+      --color-border-light: #333333;
+      --color-surface-alt: #1e1e1e;
+      --color-surface-stripe: #242424;
+      --color-btn-bg: #2a2a2a;
+      --color-btn-shadow: #444444;
+      --color-link: #4a9eff;
+      --color-header-hover: #1a2a3a;
+      --color-overlay-bg: #1e1e1e;
+      --color-overlay-scrim: rgba(0,0,0,0.7);
+      --color-overlay-h3: #aaaaaa;
+      --color-icon-check: #4caf50;
+      --color-icon-remove: #f44336;
+      --color-empty-border: #444444;
     }
-    body { margin: 0; padding: 2rem; color: #222; font-family: "Raleway"; font-size: 20px; }
+
+    body { margin: 0; padding: 2rem; color: var(--color-text); background: var(--color-bg); font-family: "Raleway"; font-size: 20px; transition: background-color 0.3s, color 0.3s; }
     h1 { margin: 0 0 16px; text-align: center; font-family: "Bitter", serif; font-weight: 900; letter-spacing: -0.1rem; font-size: 3.5rem; }
     header { margin: 3rem auto; }
     nav { margin-bottom: 8px; text-align: center; }
     nav button {
       margin-right: 8px;
       padding: 4px;
-      border: 2px solid #ccc;
-      background: #fff;
+      border: 2px solid var(--color-border);
+      background: var(--color-btn-bg);
       cursor: pointer;
       border-radius: 4px;
       width: 32px;
@@ -39,40 +71,35 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s;
     }
-    nav button img {
+    nav button img, nav button svg {
       width: 24px;
       height: 24px;
       object-fit: contain;
     }
-    nav button.active { border-color: #333; box-shadow: 0 0 0 2px #f0f0f0, 0 0 0 4px #333; }
+    nav button.active { border-color: var(--color-text); box-shadow: 0 0 0 2px var(--color-btn-shadow), 0 0 0 4px var(--color-text); }
 
-    #intro-section {
-      border: 1px solid #ddd;
-      margin: 2rem auto;
-      background: #fff;
-      max-width: 50%;
+    #intro-row {
+      background: var(--color-surface-alt);
+      font-size: 0.95em;
     }
-    @media (max-width: 768px) {
-      #intro-section {
-        max-width: 100%;
-      }
+    #intro-row td {
+      padding: 20px 14px;
+      text-align: left;
+      vertical-align: top;
     }
     #intro-label {
       display: block;
-      padding: 14px 14px 0;
-      font-family: "Raleway", sans-serif;
-      font-size: 1em;
       font-weight: 600;
-      color: #222;
+      color: var(--color-text);
+      margin-bottom: 8px;
+      font-size: 1em;
     }
     #intro-content {
-      padding: 14px;
       font-family: "Raleway", sans-serif;
-      font-size: 1em;
-      color: #222;
+      color: var(--color-text);
       line-height: 1.6;
-      text-align: left;
     }
     #intro-content h3 { margin: 0.5em 0 0.3em; font-weight: 600; font-size: 1.1em; }
     #intro-content p { margin: 0.3em 0; }
@@ -80,7 +107,7 @@
     #intro-content li { margin: 0.2em 0; }
     #intro-content strong { font-weight: 600; }
     #intro-expand {
-      color: #0a66c2;
+      color: var(--color-link);
       cursor: pointer;
       text-decoration: none;
       font-weight: 600;
@@ -93,18 +120,19 @@
       border-collapse: collapse;
       border-spacing: 0;
       width: 100%;
-      border: 1px solid #ddd;
+      border: 1px solid var(--color-border-light);
     }
     th, td {
       font-weight: 300;
       text-align: center;
       padding: 14px;
+      color: var(--color-text);
     }
     th:first-child, td:first-child {
       text-align: left;
     }
     tr:nth-child(even) {
-      background-color: #f2f2f2;
+      background-color: var(--color-surface-stripe);
     }
     .icon-check, .icon-remove {
       display: inline-block;
@@ -112,36 +140,37 @@
       height: 1.2em;
       vertical-align: -0.125em;
     }
-    .icon-check { color: green; }
-    .icon-remove { color: red; }
-    .muted { color: #aaa; }
+    .icon-check { color: var(--color-icon-check); }
+    .icon-remove { color: var(--color-icon-remove); }
+    .muted { color: var(--color-text-muted); }
 
-    thead th[data-id] { cursor: pointer; vertical-align: bottom; }
-    thead th[data-id]:hover { background-color: #e8f0fe; }
+    thead th[data-id] { vertical-align: bottom; }
+    thead th[data-id]:hover { background-color: var(--color-header-hover); }
 
     .table-scroll { overflow-x: auto; }
     .tool-name { font-weight: 600; display: block; margin-bottom: 8px; }
     .tool-logo { display: block; width: 48px; height: 48px; margin: 8px auto 0; object-fit: contain; }
-    .editor    { display: block; color: #666; font-size: 0.85em; font-weight: normal; }
+    .editor    { display: block; color: var(--color-text-secondary); font-size: 0.85em; font-weight: normal; }
 
     #empty-msg {
       padding: 48px 16px;
       text-align: center;
-      color: #666;
-      border: 1px dashed #ccc;
+      color: var(--color-text-secondary);
+      border: 1px dashed var(--color-empty-border);
       border-radius: 8px;
     }
     #empty-msg.hidden { display: none; }
 
     #overlay {
       position: fixed; inset: 0;
-      background: rgba(0,0,0,0.5);
+      background: var(--color-overlay-scrim);
       display: flex; align-items: center; justify-content: center;
       z-index: 1000;
+      transition: background-color 0.3s;
     }
     #overlay.hidden { display: none; }
     #overlay-panel {
-      background: #fff;
+      background: var(--color-overlay-bg);
       padding: 24px;
       max-width: 640px;
       width: 90%;
@@ -149,16 +178,65 @@
       overflow-y: auto;
       border-radius: 8px;
       position: relative;
+      color: var(--color-text);
+      transition: background-color 0.3s, color 0.3s;
     }
     #overlay-close {
       position: absolute; top: 8px; right: 8px;
       background: none; border: none;
       font-size: 20px; cursor: pointer;
+      color: var(--color-text);
     }
     #overlay-content section { margin-top: 16px; }
-    #overlay-content h3 { margin: 0 0 4px; font-size: 1em; color: #555; }
-    #table-footer a { color: #999; text-decoration: none; }
-    #table-footer a:hover { color: #333; text-decoration: underline; }
+    #overlay-content h3 { margin: 0 0 4px; font-size: 1em; color: var(--color-overlay-h3); }
+    #table-footer a { color: var(--color-text-tertiary); text-decoration: none; transition: color 0.3s; }
+    #table-footer a:hover { color: var(--color-text); text-decoration: underline; }
+
+    .switch {
+      font-size: 17px;
+      position: relative;
+      display: inline-block;
+      width: 3.5em;
+      height: 2em;
+      margin-left: 8px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      --background: var(--color-link);
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--background);
+      transition: .5s;
+      border-radius: 30px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 1.4em;
+      width: 1.4em;
+      border-radius: 50%;
+      left: 10%;
+      bottom: 15%;
+      box-shadow: inset 8px -4px 0px 0px #fff000;
+      background: var(--background);
+      transition: .5s;
+    }
+    input:checked + .slider {
+      background-color: var(--color-link);
+      --background: var(--color-link);
+    }
+    input:checked + .slider:before {
+      transform: translateX(100%);
+      box-shadow: inset 15px -4px 0px 15px #fff000;
+    }
   </style>
 </head>
 <body>
@@ -179,12 +257,13 @@
       <button data-lang="ko"><img src="assets/flags/ko.svg" alt="한국어"></button>
       <button data-lang="zh"><img src="assets/flags/zh.svg" alt="中文"></button>
     </nav>
+    <div style="text-align:center;margin-top:8px;">
+      <label class="switch" aria-label="Toggle dark mode">
+        <input type="checkbox" id="theme-toggle">
+        <span class="slider"></span>
+      </label>
+    </div>
   </header>
-
-  <div id="intro-section">
-    <span id="intro-label"></span>
-    <div id="intro-content"></div>
-  </div>
 
   <div class="table-scroll">
     <table id="tools-table">
@@ -192,9 +271,9 @@
     </table>
   </div>
 
-  <div id="table-footer" style="text-align: center; color: #999; font-size: 0.85em; margin-top: 16px;"></div>
-  <div style="text-align: center; color: #999; font-size: 0.85em; margin-top: 8px;">
-    <a href="mentions-legales.html" target="_blank" style="color: #999; text-decoration: none;">Mentions légales</a>
+  <div id="table-footer" style="text-align: center; color: var(--color-text-tertiary); font-size: 0.85em; margin-top: 16px;"></div>
+  <div style="text-align: center; color: var(--color-text-tertiary); font-size: 0.85em; margin-top: 8px;">
+    <a href="mentions-legales.html" target="_blank" style="color: var(--color-text-tertiary); text-decoration: none;">Mentions légales</a>
   </div>
 
   <div id="empty-msg" class="hidden"></div>

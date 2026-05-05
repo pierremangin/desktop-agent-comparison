@@ -7,6 +7,7 @@ const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 let currentLang = 'fr'
 let allTools = []
 let pagesContent = {}
+const THEME_KEY = 'theme'
 
 // ─── UI STRINGS ──────────────────────────────────────────
 const UI = {
@@ -211,7 +212,7 @@ const CRITERIA = [
   { label: { fr: 'Interface web', en: 'Web interface', es: 'Interfaz web', de: 'Weboberfläche', it: 'Interfaccia web', nl: 'Webinterface', ru: 'Веб-интерфейс', hi: 'वेब इंटरफेस', pt: 'Interface web', ja: 'Webインターフェース', ko: '웹 인터페이스', zh: '网络界面' }, render: t => boolIcon(t.web_interface) },
   { label: { fr: 'Choix du modèle', en: 'Model choice (BYOK)', es: 'Elección de modelo', de: 'Modellwahl', it: 'Scelta del modello', nl: 'Keuze van model', ru: 'Выбор модели', hi: 'मॉडल चुनाव', pt: 'Escolha de modelo', ja: 'モデルの選択', ko: '모델 선택', zh: '型号选择' }, render: t => boolIcon(t.model_choice) },
   { label: { fr: 'LLM local', en: 'Local LLM', es: 'LLM local', de: 'Lokales LLM', it: 'LLM locale', nl: 'Lokale LLM', ru: 'Локальная LLM', hi: 'स्थानीय LLM', pt: 'LLM local', ja: 'ローカルLLM', ko: '로컬 LLM', zh: '本地 LLM' }, render: t => boolIcon(t.local_llm) },
-  { label: { fr: 'Freemium', en: 'Freemium', es: 'Freemium', de: 'Freemium', it: 'Freemium', nl: 'Freemium', ru: 'Фримиум', hi: 'फ्रीमियम', pt: 'Freemium', ja: 'フリーミアム', ko: '프리미엄', zh: '免费增值' }, render: t => boolIcon(t.freemium) },
+  { label: { fr: 'Offre Gratuite', en: 'Free Offer', es: 'Oferta Gratuita', de: 'Kostenloses Angebot', it: 'Offerta Gratuita', nl: 'Gratis Aanbod', ru: 'Бесплатное предложение', hi: 'मुफ्त प्रस्ताव', pt: 'Oferta Gratuita', ja: '無料プラン', ko: '무료 혜택', zh: '免费方案' }, render: t => boolIcon(t.freemium) },
   { label: { fr: 'Offre Entreprise', en: 'Enterprise offer', es: 'Oferta empresarial', de: 'Unternehmensangebot', it: 'Offerta aziendale', nl: 'Ondernemingsaanbod', ru: 'Предложение для предприятий', hi: 'एंटरप्राइज़ ऑफर', pt: 'Oferta empresarial', ja: 'エンタープライズオファー', ko: '엔터프라이즈 제안', zh: '企业优惠' }, render: t => boolIcon(t.enterprise_offer) },
   { label: { fr: 'Agentique cloud 24/7', en: 'Cloud agentic 24/7', es: 'Agente en la nube 24/7', de: 'Cloud-Agent 24/7', it: 'Agente cloud 24/7', nl: 'Cloud-agent 24/7', ru: 'Облачный агент 24/7', hi: 'क्लाउड एजेंट 24/7', pt: 'Agente na nuvem 24/7', ja: 'クラウドエージェント24/7', ko: '클라우드 에이전트 24/7', zh: '云代理 24/7' }, render: t => boolIcon(t.cloud_agentic_24_7) },
   { label: { fr: 'Messagerie (WA/Slack/TG)', en: 'Messaging (WA/Slack/TG)', es: 'Mensajería', de: 'Messaging', it: 'Messaggistica', nl: 'Berichten', ru: 'Обмен сообщениями', hi: 'संदेश भेजना', pt: 'Mensagens', ja: 'メッセージング', ko: '메시징', zh: '消息传递' }, render: t => boolIcon(t.messaging) },
@@ -305,17 +306,23 @@ function loadMarked() {
 function renderIntroPreview(lang) {
   const preview = getPageContent('comparison_home', 'intro', lang, 'preview_text')
   const moreLabel = tx(UI.intro.more, lang)
-  document.getElementById('intro-content').innerHTML = simpleMarkdown(preview) +
-    '<span id="intro-expand" data-expanded="false">' + moreLabel + '</span>'
-  attachIntroExpandListener(lang)
+  const introContent = document.getElementById('intro-content')
+  if (introContent) {
+    introContent.innerHTML = simpleMarkdown(preview) +
+      '<span id="intro-expand" data-expanded="false">' + moreLabel + '</span>'
+    attachIntroExpandListener(lang)
+  }
 }
 
 function renderIntroFull(lang) {
   const full = getPageContent('comparison_home', 'intro', lang, 'full_text')
   const lessLabel = tx(UI.intro.less, lang)
-  document.getElementById('intro-content').innerHTML = simpleMarkdown(full) +
-    '<span id="intro-expand" data-expanded="true">' + lessLabel + '</span>'
-  attachIntroExpandListener(lang)
+  const introContent = document.getElementById('intro-content')
+  if (introContent) {
+    introContent.innerHTML = simpleMarkdown(full) +
+      '<span id="intro-expand" data-expanded="true">' + lessLabel + '</span>'
+    attachIntroExpandListener(lang)
+  }
 }
 
 function attachIntroExpandListener(lang) {
@@ -339,10 +346,6 @@ function renderChrome() {
   document.querySelectorAll('#lang-switcher button').forEach(b => {
     b.classList.toggle('active', b.dataset.lang === currentLang)
   })
-
-  const introLabel = getPageContent('comparison_home', 'intro', currentLang, 'label')
-  document.getElementById('intro-label').textContent = introLabel
-  renderIntroPreview(currentLang)
 }
 
 function renderTable() {
@@ -358,6 +361,20 @@ function renderTable() {
     return
   }
   empty.classList.add('hidden')
+
+  const introLabel = getPageContent('comparison_home', 'intro', currentLang, 'label')
+  const preview = getPageContent('comparison_home', 'intro', currentLang, 'preview_text')
+  const moreLabel = tx(UI.intro.more, currentLang)
+  const colspan = filtered.length + 1
+
+  const introRow = `
+    <tr id="intro-row">
+      <td colspan="${colspan}">
+        <span id="intro-label">${introLabel}</span>
+        <div id="intro-content">${simpleMarkdown(preview)}<span id="intro-expand" data-expanded="false">${moreLabel}</span></div>
+      </td>
+    </tr>
+  `
 
   const headCells = filtered.map(t => `
     <th data-id="${t.id}" width="9%">
@@ -375,6 +392,7 @@ function renderTable() {
 
   table.innerHTML = `
     <thead>
+      ${introRow}
       <tr>
         <th>${tx(UI.criterion, currentLang)}</th>
         ${headCells}
@@ -382,6 +400,8 @@ function renderTable() {
     </thead>
     <tbody>${bodyRows}</tbody>
   `
+
+  attachIntroExpandListener(currentLang)
 
   const footerURL = currentLang === 'fr' ? 'https://ia-decoded.fr' : 'https://ia-decoded.com'
   const footerText = tx(UI.footer, currentLang)
@@ -436,8 +456,26 @@ document.getElementById('lang-switcher').addEventListener('click', function(e) {
 })
 
 
+// ─── THEME ───────────────────────────────────────────────
+function applyTheme(dark) {
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light'
+  document.getElementById('theme-toggle').checked = dark
+}
+
+function initTheme() {
+  const saved = localStorage.getItem(THEME_KEY)
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+  applyTheme(saved ? saved === 'dark' : prefersDark)
+  document.getElementById('theme-toggle').addEventListener('change', () => {
+    const isDark = document.getElementById('theme-toggle').checked
+    localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light')
+    applyTheme(isDark)
+  })
+}
+
 // ─── INIT ────────────────────────────────────────────────
 async function init() {
+  initTheme()
   await fetchPagesContent()
   allTools = await fetchTools()
   render()
