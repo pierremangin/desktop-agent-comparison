@@ -150,6 +150,7 @@
     .table-scroll { overflow-x: auto; }
     .tool-name { font-weight: 600; display: block; margin-bottom: 8px; }
     .tool-logo { display: block; width: 48px; height: 48px; margin: 8px auto 0; object-fit: contain; }
+    .tool-logo.dark-logo-inverted { filter: invert(1); }
     .editor    { display: block; color: var(--color-text-secondary); font-size: 0.85em; font-weight: normal; }
 
     #empty-msg {
@@ -193,11 +194,11 @@
     #table-footer a:hover { color: var(--color-text); text-decoration: underline; }
 
     .switch {
-      font-size: 17px;
+      font-size: 14px;
       position: relative;
       display: inline-block;
       width: 3.5em;
-      height: 2em;
+      height: 2.1em;
       margin-left: 8px;
     }
     .switch input {
@@ -206,7 +207,7 @@
       height: 0;
     }
     .slider {
-      --background: var(--color-link);
+      --background: #000000;
       position: absolute;
       cursor: pointer;
       top: 0;
@@ -216,26 +217,27 @@
       background-color: var(--background);
       transition: .5s;
       border-radius: 30px;
+      border: 1px solid #ffffff;
     }
     .slider:before {
       position: absolute;
       content: "";
-      height: 1.4em;
-      width: 1.4em;
+      height: 1.3em;
+      width: 1.3em;
       border-radius: 50%;
       left: 10%;
       bottom: 15%;
-      box-shadow: inset 8px -4px 0px 0px #fff000;
+      box-shadow: inset 8px -4px 0px 0px #ffffff;
       background: var(--background);
       transition: .5s;
     }
     input:checked + .slider {
-      background-color: var(--color-link);
-      --background: var(--color-link);
+      background-color: #000000;
+      --background: #000000;
     }
     input:checked + .slider:before {
       transform: translateX(100%);
-      box-shadow: inset 15px -4px 0px 15px #fff000;
+      box-shadow: inset 15px -4px 0px 15px #ffffff;
     }
   </style>
 </head>

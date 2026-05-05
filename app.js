@@ -8,6 +8,7 @@ let currentLang = 'fr'
 let allTools = []
 let pagesContent = {}
 const THEME_KEY = 'theme'
+const BLACK_LOGOS = ['accomplish', 'atomic-chat', 'highlight', 'chatgpt-codex', 'open-webui', 'goose', 'hermes-agent', 'openwork', 'manus', 'zo-computer']
 
 // ─── UI STRINGS ──────────────────────────────────────────
 const UI = {
@@ -457,9 +458,23 @@ document.getElementById('lang-switcher').addEventListener('click', function(e) {
 
 
 // ─── THEME ───────────────────────────────────────────────
+function updateLogoDarkMode(dark) {
+  document.querySelectorAll('.tool-logo').forEach(img => {
+    const src = img.src
+    const slug = src.match(/logo-([^/]+)\.svg/)?.[1]
+    const isBlackLogo = slug && BLACK_LOGOS.includes(slug)
+    if (dark && isBlackLogo) {
+      img.classList.add('dark-logo-inverted')
+    } else {
+      img.classList.remove('dark-logo-inverted')
+    }
+  })
+}
+
 function applyTheme(dark) {
   document.documentElement.dataset.theme = dark ? 'dark' : 'light'
   document.getElementById('theme-toggle').checked = dark
+  updateLogoDarkMode(dark)
 }
 
 function initTheme() {
