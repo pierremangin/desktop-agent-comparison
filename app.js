@@ -189,7 +189,7 @@ const boolIcon = v =>
   v === false ? '<svg class="icon-remove" viewBox="0 0 32 32" fill="red"><path d="M29.4,7.34l-8.66,8.66,8.66,8.66v4.74h-4.74l-8.66-8.66-8.66,8.66H2.6v-4.74l8.66-8.66L2.6,7.34V2.6h4.74l8.66,8.66L24.66,2.6h4.74v4.74Z"/></svg>' :
                 '<span class="muted">—</span>'
 
-const textCell = v => (v ?? v === 0) ? String(v) : '<span class="muted">—</span>'
+const textCell = v => v != null ? String(v) : '<span class="muted">—</span>'
 
 const levelCell = n => n
   ? '●'.repeat(n) + '<span class="muted">' + '○'.repeat(3 - n) + '</span>'
