@@ -8,7 +8,8 @@ let currentLang = 'fr'
 let allTools = []
 let pagesContent = {}
 const THEME_KEY = 'theme'
-const BLACK_LOGOS = ['accomplish', 'atomic-chat', 'highlight', 'chatgpt-codex', 'open-webui', 'goose', 'hermes-agent', 'openwork', 'manus', 'zo-computer']
+const LOGO_BASE_PATH = 'assets/logos'
+const logoCache = new Map()
 
 // ─── UI STRINGS ──────────────────────────────────────────
 const UI = {
@@ -174,6 +175,84 @@ const UI = {
 
 const tx = (obj, lang) => obj?.[lang] ?? obj?.fr ?? ''
 
+function logoSvgUrl(slug) {
+  return `${LOGO_BASE_PATH}/logo-${slug}.svg`
+}
+
+function logoPngUrl(slug) {
+  return `${LOGO_BASE_PATH}/logo-${slug}.png`
+}
+
+function normalizeInlineSvg(svg) {
+  svg.querySelectorAll('script, foreignObject').forEach(n => n.remove())
+
+  // Let CSS handle sizing.
+  svg.removeAttribute('width')
+  svg.removeAttribute('height')
+  svg.setAttribute('preserveAspectRatio', 'xMidYMid meet')
+
+  // Fix "no fill specified" => default black. Use the surrounding element's color.
+  if (!svg.hasAttribute('fill')) svg.setAttribute('fill', 'currentColor')
+
+  // Avoid focus ring quirks in some browsers for inline SVG.
+  svg.setAttribute('focusable', 'false')
+  return svg
+}
+
+async function getLogoNode(slug) {
+  if (logoCache.has(slug)) {
+    const cached = logoCache.get(slug)
+    return cached ? cached.cloneNode(true) : null
+  }
+
+  try {
+    const res = await fetch(logoSvgUrl(slug), { cache: 'force-cache' })
+    if (!res.ok) {
+      logoCache.set(slug, null)
+      return null
+    }
+    const text = await res.text()
+    const doc = new DOMParser().parseFromString(text, 'image/svg+xml')
+    const svg = doc.querySelector('svg')
+    if (!svg) {
+      logoCache.set(slug, null)
+      return null
+    }
+    normalizeInlineSvg(svg)
+    logoCache.set(slug, svg)
+    return svg.cloneNode(true)
+  } catch (e) {
+    console.warn('Failed to load logo SVG', slug, e)
+    logoCache.set(slug, null)
+    return null
+  }
+}
+
+async function hydrateLogos() {
+  const slots = Array.from(document.querySelectorAll('.tool-logo[data-slug]'))
+  await Promise.all(slots.map(async slot => {
+    const slug = slot.dataset.slug
+    if (!slug) return
+
+    const svg = await getLogoNode(slug)
+    if (svg) {
+      slot.innerHTML = ''
+      slot.appendChild(svg)
+      return
+    }
+
+    // Fallback: try PNG if present.
+    const img = document.createElement('img')
+    img.src = logoPngUrl(slug)
+    img.alt = ''
+    img.loading = 'lazy'
+    img.decoding = 'async'
+    img.addEventListener('error', () => { slot.textContent = '' })
+    slot.innerHTML = ''
+    slot.appendChild(img)
+  }))
+}
+
 const LICENSE_LABELS = {
   'MIT': { fr: 'MIT', en: 'MIT', es: 'MIT', de: 'MIT', it: 'MIT', nl: 'MIT', ru: 'MIT', hi: 'MIT', pt: 'MIT', ja: 'MIT', ko: 'MIT', zh: 'MIT' },
   'Apache-2.0': { fr: 'Apache', en: 'Apache', es: 'Apache', de: 'Apache', it: 'Apache', nl: 'Apache', ru: 'Apache', hi: 'Apache', pt: 'Apache', ja: 'Apache', ko: 'Apache', zh: 'Apache' },
@@ -189,7 +268,7 @@ const boolIcon = v =>
   v === false ? '<svg class="icon-remove" viewBox="0 0 32 32" fill="red"><path d="M29.4,7.34l-8.66,8.66,8.66,8.66v4.74h-4.74l-8.66-8.66-8.66,8.66H2.6v-4.74l8.66-8.66L2.6,7.34V2.6h4.74l8.66,8.66L24.66,2.6h4.74v4.74Z"/></svg>' :
                 '<span class="muted">—</span>'
 
-const textCell = v => v != null ? String(v) : '<span class="muted">—</span>'
+const textCell = v => (v ?? v === 0) ? String(v) : '<span class="muted">—</span>'
 
 const levelCell = n => n
   ? '●'.repeat(n) + '<span class="muted">' + '○'.repeat(3 - n) + '</span>'
@@ -198,7 +277,7 @@ const levelCell = n => n
 const CRITERIA = [
   { label: { fr: 'Éditeur', en: 'Publisher', es: 'Editorial', de: 'Herausgeber', it: 'Editore', nl: 'Uitgever', ru: 'Издатель', hi: 'प्रकाशक', pt: 'Editor', ja: '発行者', ko: '게시자', zh: '发布者' }, render: t => textCell(t.editor) },
   { label: { fr: 'Localisation', en: 'Location', es: 'Ubicación', de: 'Standort', it: 'Posizione', nl: 'Locatie', ru: 'Местоположение', hi: 'स्थान', pt: 'Localização', ja: '場所', ko: '위치', zh: '位置' }, render: t => textCell(t.location) },
-  { label: { fr: 'Télécharger', en: 'Download', es: 'Descargar', de: 'Herunterladen', it: 'Scarica', nl: 'Downloaden', ru: 'Скачать', hi: 'डाउनलोड', pt: 'Baixar', ja: 'ダウンロード', ko: '다운로드', zh: '下载' }, render: t => t.website_url ? `<a href="${t.website_url}" target="_blank" title="${t.website_url}"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.125em"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>` : '<span class="muted">—</span>' },
+  { label: { fr: 'Télécharger', en: 'Download', es: 'Descargar', de: 'Herunterladen', it: 'Scarica', nl: 'Downloaden', ru: 'Скачать', hi: 'डाउनलोड', pt: 'Baixar', ja: 'ダウンロード', ko: '다운로드', zh: '下载' }, render: t => t.website_url ? `<a class="download-link" href="${t.website_url}" target="_blank" rel="noopener" title="${t.website_url}" aria-label="${t.website_url}"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.125em"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>` : '<span class="muted">—</span>' },
   { label: { fr: 'Date de sortie', en: 'Release date', es: 'Fecha de lanzamiento', de: 'Veröffentlichungsdatum', it: 'Data di rilascio', nl: 'Releasedatum', ru: 'Дата выпуска', hi: 'रिलीज़ की तारीख', pt: 'Data de lançamento', ja: 'リリース日', ko: '출시일', zh: '发布日期' }, render: t => textCell(t.first_release_date?.substring(0, 7)) },
   { label: { fr: 'License', en: 'License', es: 'Licencia', de: 'Lizenz', it: 'Licenza', nl: 'Licentie', ru: 'Лицензия', hi: 'लाइसेंस', pt: 'Licença', ja: 'ライセンス', ko: '라이센스', zh: '许可证' }, render: (t, l) => {
     if (!t.license_code) return '<span class="muted">—</span>'
@@ -380,7 +459,7 @@ function renderTable() {
   const headCells = filtered.map(t => `
     <th data-id="${t.id}" width="9%">
       <span class="tool-name">${t.name}</span>
-      <img src="https://xrwqndrtckfgoztfkktj.supabase.co/storage/v1/object/public/comparatif/logo-${t.slug}.svg" alt="${t.name}" class="tool-logo">
+      <span class="tool-logo" data-slug="${t.slug}" role="img" aria-label="${t.name} logo"></span>
     </th>
   `).join('')
 
@@ -403,6 +482,7 @@ function renderTable() {
   `
 
   attachIntroExpandListener(currentLang)
+  hydrateLogos()
 
   const footerURL = currentLang === 'fr' ? 'https://ia-decoded.fr' : 'https://ia-decoded.com'
   const footerText = tx(UI.footer, currentLang)
@@ -458,23 +538,9 @@ document.getElementById('lang-switcher').addEventListener('click', function(e) {
 
 
 // ─── THEME ───────────────────────────────────────────────
-function updateLogoDarkMode(dark) {
-  document.querySelectorAll('.tool-logo').forEach(img => {
-    const src = img.src
-    const slug = src.match(/logo-([^/]+)\.svg/)?.[1]
-    const isBlackLogo = slug && BLACK_LOGOS.includes(slug)
-    if (dark && isBlackLogo) {
-      img.classList.add('dark-logo-inverted')
-    } else {
-      img.classList.remove('dark-logo-inverted')
-    }
-  })
-}
-
 function applyTheme(dark) {
   document.documentElement.dataset.theme = dark ? 'dark' : 'light'
   document.getElementById('theme-toggle').checked = dark
-  updateLogoDarkMode(dark)
 }
 
 function initTheme() {
