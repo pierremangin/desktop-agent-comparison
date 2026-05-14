@@ -73,7 +73,7 @@
       transition: background-color 0.3s, color 0.3s;
     }
 
-    header { margin: clamp(1.5rem, 4vw, 3rem) auto; max-width: 1200px; }
+    header { margin: clamp(1.5rem, 4vw, 3rem) auto; }
     h1 {
       margin: 0 0 16px;
       text-align: center;
@@ -139,7 +139,8 @@
     }
     th, td { font-weight: 300; text-align: center; padding: 14px; color: var(--color-text); }
     th:first-child, td:first-child { text-align: left; }
-    tr:nth-child(even) { background-color: var(--color-surface-stripe); }
+    tbody tr:nth-child(odd) > td { background-color: var(--color-bg); }
+    tbody tr:nth-child(even) > td { background-color: var(--color-surface-stripe); }
 
     .icon-check, .icon-remove { display: inline-block; width: 1.2em; height: 1.2em; vertical-align: -0.125em; }
     .icon-check { color: var(--color-icon-check); }
@@ -185,7 +186,6 @@
       position: sticky;
       left: 0;
       z-index: 6;
-      background: inherit;
       box-shadow: 1px 0 0 var(--color-border-light);
       font-weight: 500;
     }
