@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
-  <title>Comparatif Agents IA de bureau | IA-decoded, 2026</title>
+  <title>Comparatif Agents IA de bureau&nbsp;| IA-decoded, 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+1+Code:wght@100..700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+1+Code:wght@100..700&family=Raleway:wght@300..700&display=swap" rel="stylesheet">
   <style>
     :root {
       --color-bg: #ffffff;
@@ -31,6 +32,10 @@
       --color-icon-check: green;
       --color-icon-remove: red;
       --color-empty-border: #cccccc;
+
+      --page-padding: clamp(12px, 4vw, 32px);
+      --radius: 10px;
+      --shadow: 0 1px 0 rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.08);
     }
 
     html[data-theme="dark"] {
@@ -55,12 +60,39 @@
       --color-empty-border: #444444;
     }
 
-    body { margin: 0; padding: 2rem; color: var(--color-text); background: var(--color-bg); font-family: "M PLUS 1 Code"; font-size: 20px; transition: background-color 0.3s, color 0.3s; }
-    h1 { margin: 0 0 16px; text-align: center; font-family: "M PLUS 1 Code", serif; font-weight: 900; font-variant-caps: all-small-caps; font-size: 3.5rem; }
-    header { margin: 3rem auto; }
-    nav { margin-bottom: 8px; text-align: center; }
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: var(--page-padding);
+      color: var(--color-text);
+      background: var(--color-bg);
+      font-family: "M PLUS 1 Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: clamp(14px, 1.6vw, 20px);
+      line-height: 1.3;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    header { margin: clamp(1.5rem, 4vw, 3rem) auto; max-width: 1200px; }
+    h1 {
+      margin: 0 0 16px;
+      text-align: center;
+      font-weight: 900;
+      font-variant-caps: all-small-caps;
+      font-size: clamp(2rem, 4.2vw, 3.5rem);
+      letter-spacing: 0.02em;
+    }
+
+    nav {
+      margin-bottom: 8px;
+      text-align: center;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+
     nav button {
-      margin-right: 8px;
       padding: 4px;
       border: 2px solid var(--color-border);
       background: var(--color-btn-bg);
@@ -73,73 +105,43 @@
       justify-content: center;
       transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s;
     }
-    nav button img, nav button svg {
-      width: 24px;
-      height: 24px;
-      object-fit: contain;
-    }
+    nav button img, nav button svg { width: 24px; height: 24px; object-fit: contain; }
     nav button.active { border-color: var(--color-text); box-shadow: 0 0 0 2px var(--color-btn-shadow), 0 0 0 4px var(--color-text); }
 
-    #intro-row {
-      background: var(--color-surface-alt);
-      font-size: 0.95em;
-    }
-    #intro-row td {
-      padding: 20px 14px;
-      text-align: left;
-      vertical-align: top;
-    }
-    #intro-label {
-      display: block;
-      font-weight: 600;
-      color: var(--color-text);
-      margin-bottom: 8px;
-      font-size: 1em;
-    }
-    #intro-content {
-      font-family: "Raleway", sans-serif;
-      color: var(--color-text);
-      line-height: 1.6;
-    }
+    #intro-row { background: var(--color-surface-alt); font-size: 0.95em; }
+    #intro-row td { padding: 20px 14px; text-align: left; vertical-align: top; }
+    #intro-label { display: block; font-weight: 600; color: var(--color-text); margin-bottom: 8px; font-size: 1em; }
+    #intro-content { font-family: "Raleway", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: var(--color-text); line-height: 1.6; }
     #intro-content h3 { margin: 0.5em 0 0.3em; font-weight: 600; font-size: 1.1em; }
     #intro-content p { margin: 0.3em 0; }
     #intro-content ul { margin: 0.5em 0 0.5em 1.5em; padding: 0; }
     #intro-content li { margin: 0.2em 0; }
     #intro-content strong { font-weight: 600; }
-    #intro-expand {
-      color: var(--color-link);
-      cursor: pointer;
-      text-decoration: none;
-      font-weight: 600;
-      display: inline;
-      margin-left: 4px;
-    }
+    #intro-expand { color: var(--color-link); cursor: pointer; text-decoration: none; font-weight: 600; display: inline; margin-left: 4px; }
     #intro-expand:hover { text-decoration: underline; }
 
+    /* Container: horizontal scrollbar forbidden. Columns are paged via buttons when needed. */
+    .table-scroll {
+      overflow-x: hidden;
+      position: relative;
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      background: var(--color-bg);
+    }
+
     table {
-      border-collapse: collapse;
+      border-collapse: separate;
       border-spacing: 0;
       width: 100%;
-      border: 1px solid var(--color-border-light);
+      border: 0;
+      min-width: 0;
     }
-    th, td {
-      font-weight: 300;
-      text-align: center;
-      padding: 14px;
-      color: var(--color-text);
-    }
-    th:first-child, td:first-child {
-      text-align: left;
-    }
-    tr:nth-child(even) {
-      background-color: var(--color-surface-stripe);
-    }
-    .icon-check, .icon-remove {
-      display: inline-block;
-      width: 1.2em;
-      height: 1.2em;
-      vertical-align: -0.125em;
-    }
+    th, td { font-weight: 300; text-align: center; padding: 14px; color: var(--color-text); }
+    th:first-child, td:first-child { text-align: left; }
+    tr:nth-child(even) { background-color: var(--color-surface-stripe); }
+
+    .icon-check, .icon-remove { display: inline-block; width: 1.2em; height: 1.2em; vertical-align: -0.125em; }
     .icon-check { color: var(--color-icon-check); }
     .icon-remove { color: var(--color-icon-remove); }
     .muted { color: var(--color-text-muted); }
@@ -150,61 +152,87 @@
     thead th[data-id] { vertical-align: bottom; }
     thead th[data-id]:hover { background-color: var(--color-header-hover); }
 
-    .table-scroll { overflow-x: auto; }
-    .tool-name { font-weight: 600; display: block; margin-bottom: 8px; }
-    .tool-logo {
-      display: block;
-      width: 48px;
-      height: 48px;
-      margin: 8px auto 0;
-      color: var(--color-text);
+    .tool-name {
+      font-weight: 600;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+      margin-bottom: 8px;
+      line-height: 1.15;
     }
-    .tool-logo svg {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-    .tool-logo img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-    .editor    { display: block; color: var(--color-text-secondary); font-size: 0.85em; font-weight: normal; }
+    .tool-logo { display: block; width: 48px; height: 48px; margin: 8px auto 0; color: var(--color-text); }
+    .tool-logo svg { display: block; width: 100%; height: 100%; }
+    .tool-logo img { display: block; width: 100%; height: 100%; object-fit: contain; }
+    .editor { display: block; color: var(--color-text-secondary); font-size: 0.85em; font-weight: normal; }
 
-    #empty-msg {
-      padding: 48px 16px;
-      text-align: center;
-      color: var(--color-text-secondary);
-      border: 1px dashed var(--color-empty-border);
-      border-radius: 8px;
-    }
+    #empty-msg { padding: 48px 16px; text-align: center; color: var(--color-text-secondary); border: 1px dashed var(--color-empty-border); border-radius: 8px; }
     #empty-msg.hidden { display: none; }
 
+    /* Sticky header row + sticky first column improve navigation on small screens. */
+    thead tr:last-child th {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--color-bg);
+      box-shadow: 0 1px 0 var(--color-border-light);
+    }
+    thead tr:last-child th:first-child {
+      left: 0;
+      z-index: 12;
+    }
+    td:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 6;
+      background: inherit;
+      box-shadow: 1px 0 0 var(--color-border-light);
+      font-weight: 500;
+    }
+    thead tr:last-child th:not(:first-child) { box-shadow: 0 1px 0 var(--color-border-light); }
+
+    /* Ensure tool columns remain readable when paged. */
+    thead tr:last-child th[data-id],
+    tbody td:not(:first-child) {
+      min-width: 140px;
+    }
+    thead tr:last-child th:first-child,
+    tbody td:first-child {
+      min-width: 200px;
+    }
+
     #overlay {
-      position: fixed; inset: 0;
+      position: fixed;
+      inset: 0;
       background: var(--color-overlay-scrim);
-      display: flex; align-items: center; justify-content: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       z-index: 1000;
       transition: background-color 0.3s;
+      padding: 12px;
     }
     #overlay.hidden { display: none; }
     #overlay-panel {
       background: var(--color-overlay-bg);
       padding: 24px;
-      max-width: 640px;
-      width: 90%;
+      max-width: 720px;
+      width: min(92vw, 720px);
       max-height: 85vh;
       overflow-y: auto;
-      border-radius: 8px;
+      border-radius: var(--radius);
       position: relative;
       color: var(--color-text);
       transition: background-color 0.3s, color 0.3s;
     }
     #overlay-close {
-      position: absolute; top: 8px; right: 8px;
-      background: none; border: none;
-      font-size: 20px; cursor: pointer;
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
       color: var(--color-text);
     }
     #overlay-content section { margin-top: 16px; }
@@ -212,19 +240,8 @@
     #table-footer a { color: var(--color-text-tertiary); text-decoration: none; transition: color 0.3s; }
     #table-footer a:hover { color: var(--color-text); text-decoration: underline; }
 
-    .switch {
-      font-size: 14px;
-      position: relative;
-      display: inline-block;
-      width: 3.5em;
-      height: 2.1em;
-      margin-left: 8px;
-    }
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
+    .switch { font-size: 14px; position: relative; display: inline-block; width: 3.5em; height: 2.1em; margin-left: 8px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
     .slider {
       --background: #000000;
       position: absolute;
@@ -250,18 +267,96 @@
       background: var(--background);
       transition: .5s;
     }
-    input:checked + .slider {
-      background-color: #000000;
-      --background: #000000;
+    input:checked + .slider { background-color: #000000; --background: #000000; }
+    input:checked + .slider:before { transform: translateX(100%); box-shadow: inset 15px -4px 0px 15px #ffffff; }
+
+    /* Mobile tightening: reduce padding, make the table more readable at narrow widths. */
+    @media (max-width: 720px) {
+      #intro-row td { padding: 16px 12px; }
+      th, td { padding: 10px 10px; }
+      .tool-logo { width: 36px; height: 36px; margin-top: 6px; }
+      thead tr:last-child th[data-id],
+      tbody td:not(:first-child) { min-width: 118px; }
+      thead tr:last-child th:first-child,
+      tbody td:first-child { min-width: 170px; }
+
+      #overlay { padding: 0; }
+      #overlay-panel {
+        width: 100vw;
+        max-width: none;
+        height: 100vh;
+        max-height: none;
+        border-radius: 0;
+      }
     }
-    input:checked + .slider:before {
-      transform: translateX(100%);
-      box-shadow: inset 15px -4px 0px 15px #ffffff;
+
+    /* Mobile single-column mode (one tool at a time) */
+    .mobile-col-nav {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      max-width: 1200px;
+      margin: 0 auto 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius);
+      background: var(--color-surface-alt);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.04);
+    }
+    .mobile-col-nav button {
+      border: 1px solid var(--color-border);
+      background: var(--color-btn-bg);
+      color: var(--color-text);
+      border-radius: 10px;
+      height: 40px;
+      width: 44px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .mobile-col-nav button:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+    .mobile-col-label {
+      flex: 1 1 auto;
+      min-width: 0;
+      text-align: center;
+      font-weight: 700;
+      line-height: 1.1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .mobile-col-label .name {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
+      overflow: hidden;
+    }
+    .mobile-col-label .count {
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      font-size: 0.9em;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 600px) {
+      .mobile-col-nav { display: flex; }
+      thead tr:last-child th[data-id],
+      tbody td:not(:first-child) { min-width: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; scroll-behavior: auto !important; }
     }
   </style>
 </head>
 <body>
-
   <header>
     <h1 id="page-title">Comparatif Agents IA de bureau - Mai 2026</h1>
     <nav id="lang-switcher">
@@ -286,7 +381,16 @@
     </div>
   </header>
 
-  <div class="table-scroll">
+  <div id="mobile-col-nav" class="mobile-col-nav" aria-label="Navigation outils (mobile)">
+    <button id="mobile-col-prev" type="button" aria-label="Outil précédent">‹</button>
+    <div id="mobile-col-label" class="mobile-col-label">
+      <span class="name"></span>
+      <span class="count"></span>
+    </div>
+    <button id="mobile-col-next" type="button" aria-label="Outil suivant">›</button>
+  </div>
+
+  <div class="table-scroll" aria-label="Tableau comparatif">
     <table id="tools-table">
       <!-- thead + tbody injectés par app.js -->
     </table>
@@ -308,6 +412,124 @@
       </div>
     </div>
   </div>
+
+  <script>
+    ;(function() {
+      const nav = document.getElementById('mobile-col-nav')
+      const prevBtn = document.getElementById('mobile-col-prev')
+      const nextBtn = document.getElementById('mobile-col-next')
+      const label = document.getElementById('mobile-col-label')
+      const nameSlot = label ? label.querySelector('.name') : null
+      const countSlot = label ? label.querySelector('.count') : null
+      const table = document.getElementById('tools-table')
+      if (!nav || !prevBtn || !nextBtn || !nameSlot || !countSlot || !table) return
+
+      let current = 0
+
+      function getToolHeaders() {
+        const headerRow = table.querySelector('thead tr:last-child')
+        if (!headerRow) return []
+        const ths = Array.from(headerRow.querySelectorAll('th'))
+        return ths.slice(1)
+      }
+
+      function setIntroColspan(colspan) {
+        const introCell = table.querySelector('#intro-row td')
+        if (!introCell) return
+        if (!introCell.dataset.colspanFull) {
+          introCell.dataset.colspanFull = String(introCell.colSpan || '')
+        }
+        introCell.colSpan = colspan
+      }
+
+      function computeColumnsToShow(total, containerWidth) {
+        if (containerWidth < 600) return 1
+        const criteriaMin = containerWidth < 720 ? 170 : 200
+        const toolMin = containerWidth < 720 ? 118 : 140
+        const fit = Math.max(1, Math.floor((containerWidth - criteriaMin) / toolMin))
+        return Math.max(1, Math.min(total, fit))
+      }
+
+      function applyColumnPaging() {
+        const toolHeaders = getToolHeaders()
+        const total = toolHeaders.length
+        if (total === 0) return
+
+        const containerWidth = table.parentElement ? table.parentElement.clientWidth : window.innerWidth
+        const columnsToShow = computeColumnsToShow(total, containerWidth)
+
+        if (columnsToShow >= total) {
+          nav.style.display = 'none'
+          const headerRow = table.querySelector('thead tr:last-child')
+          if (headerRow) Array.from(headerRow.children).forEach(el => { el.hidden = false })
+          table.querySelectorAll('tbody tr').forEach(tr => Array.from(tr.children).forEach(td => { td.hidden = false }))
+          const introCell = table.querySelector('#intro-row td')
+          if (introCell) {
+            const full = Number(introCell.dataset.colspanFull || introCell.colSpan || 0)
+            if (full > 0) introCell.colSpan = full
+          }
+          return
+        }
+
+        nav.style.display = 'flex'
+        const maxStart = Math.max(0, total - columnsToShow)
+        current = Math.max(0, Math.min(current, maxStart))
+
+        const names = toolHeaders.slice(current, current + columnsToShow).map(th =>
+          (th.querySelector('.tool-name')?.textContent || '').trim()
+        ).filter(Boolean)
+        nameSlot.textContent = names.length ? names.join(' · ') : '—'
+        countSlot.textContent = `${current + 1}-${Math.min(total, current + columnsToShow)} / ${total}`
+
+        prevBtn.disabled = total <= columnsToShow || current === 0
+        nextBtn.disabled = total <= columnsToShow || current >= maxStart
+
+        setIntroColspan(1 + columnsToShow)
+
+        const headerRow = table.querySelector('thead tr:last-child')
+        if (headerRow) {
+          const ths = Array.from(headerRow.children)
+          ths.forEach((th, idx) => {
+            if (idx === 0) { th.hidden = false; return }
+            const toolIdx = idx - 1
+            th.hidden = toolIdx < current || toolIdx >= current + columnsToShow
+          })
+        }
+
+        table.querySelectorAll('tbody tr').forEach(tr => {
+          const cells = Array.from(tr.children)
+          cells.forEach((td, idx) => {
+            if (idx === 0) { td.hidden = false; return }
+            const toolIdx = idx - 1
+            td.hidden = toolIdx < current || toolIdx >= current + columnsToShow
+          })
+        })
+      }
+
+      function shift(delta) {
+        const toolHeaders = getToolHeaders()
+        const total = toolHeaders.length
+        if (total <= 1) return
+
+        const containerWidth = table.parentElement ? table.parentElement.clientWidth : window.innerWidth
+        const columnsToShow = computeColumnsToShow(total, containerWidth)
+        if (total <= columnsToShow) return
+
+        const maxStart = Math.max(0, total - columnsToShow)
+        current = Math.max(0, Math.min(maxStart, current + delta))
+        applyColumnPaging()
+      }
+
+      prevBtn.addEventListener('click', () => shift(-1))
+      nextBtn.addEventListener('click', () => shift(1))
+      window.addEventListener('resize', applyColumnPaging, { passive: true })
+
+      const observer = new MutationObserver(() => applyColumnPaging())
+      observer.observe(table, { childList: true, subtree: true })
+
+      applyColumnPaging()
+    })()
+  </script>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="app.js"></script>
