@@ -298,12 +298,17 @@ const CRITERIA = [
   { label: { fr: 'Messagerie (WA/Slack/TG)', en: 'Messaging (WA/Slack/TG)', es: 'Mensajería', de: 'Messaging', it: 'Messaggistica', nl: 'Berichten', ru: 'Обмен сообщениями', hi: 'संदेश भेजना', pt: 'Mensagens', ja: 'メッセージング', ko: '메시징', zh: '消息传递' }, render: t => boolIcon(t.messaging) },
   { label: { fr: 'MCP natif', en: 'Native MCP', es: 'MCP nativo', de: 'Natives MCP', it: 'MCP nativo', nl: 'Native MCP', ru: 'Native MCP', hi: 'नेटिव MCP', pt: 'MCP nativo', ja: 'ネイティブMCP', ko: '네이티브 MCP', zh: '本地 MCP' }, render: t => boolIcon(t.mcp_native) },
   { label: { fr: 'Computer use', en: 'Computer use', es: 'Uso de computadora', de: 'Computernutzung', it: 'Utilizzo del computer', nl: 'Computergebruik', ru: 'Использование компьютера', hi: 'कंप्यूटर का उपयोग', pt: 'Uso do computador', ja: 'コンピューター使用', ko: '컴퓨터 사용', zh: '计算机使用' }, render: t => boolIcon(t.computer_use) },
+  { label: { fr: 'SOC 2', en: 'SOC 2', es: 'SOC 2', de: 'SOC 2', it: 'SOC 2', nl: 'SOC 2', ru: 'SOC 2', hi: 'SOC 2', pt: 'SOC 2', ja: 'SOC 2', ko: 'SOC 2', zh: 'SOC 2' }, render: t => boolIcon(t.soc2) },
+  { label: { fr: 'RGPD', en: 'GDPR', es: 'RGPD', de: 'DSGVO', it: 'GDPR', nl: 'AVG', ru: 'GDPR', hi: 'GDPR', pt: 'RGPD', ja: 'GDPR', ko: 'GDPR', zh: 'GDPR' }, render: t => boolIcon(t.gdpr) },
+  { label: { fr: 'DSA', en: 'DSA', es: 'DSA', de: 'DSA', it: 'DSA', nl: 'DSA', ru: 'DSA', hi: 'DSA', pt: 'DSA', ja: 'DSA', ko: 'DSA', zh: 'DSA' }, render: t => boolIcon(t.dsa) },
+  { label: { fr: 'DMA', en: 'DMA', es: 'DMA', de: 'DMA', it: 'DMA', nl: 'DMA', ru: 'DMA', hi: 'DMA', pt: 'DMA', ja: 'DMA', ko: 'DMA', zh: 'DMA' }, render: t => boolIcon(t.dma) },
+  { label: { fr: 'Forfait Équipe', en: 'Team plan', es: 'Plan de equipo', de: 'Team-Plan', it: 'Piano Team', nl: 'Teamplan', ru: 'Командный план', hi: 'टीम योजना', pt: 'Plano de equipe', ja: 'チームプラン', ko: '팀 플랜', zh: '团队计划' }, render: t => boolIcon(t.team_plan) },
 ]
 
 // ─── FETCH ───────────────────────────────────────────────
 async function fetchTools() {
   const { data, error } = await db
-    .from('tools')
+    .from('tools_old')
     .select(`
       *,
       tools_translations(field_key, field_value, lang_code)
